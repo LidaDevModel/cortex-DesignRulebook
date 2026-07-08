@@ -8,3 +8,6 @@
 # Mac + local backup junk
 .DS_Store
 .claude-backup-*/
+
+# Harness-generated scheduler lock (machine-local state)
+.claude/scheduled_tasks.lock
