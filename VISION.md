@@ -277,6 +277,21 @@ The active user's role is always visible in the sidebar near the avatar (desktop
 
 ---
 
+## Chat non-answers
+
+The AI chat only shows a citation chip when the answer is grounded in a real Library section. When it can't ground an answer, it deflects with one of the two messages below — **rendered with no citation chip** (a chip implies a backing source; a non-answer has none). These are distinct from the *chat failure* case above ("Cortex couldn't get a response") — a failure offers a retry; a deflection does not.
+
+The resolver (`resolveResponse` in `cortex/src/lib/chat-mock.ts`) is a three-tier gate: a question that matches a topic gets a grounded answer with citations; one that hits the domain vocabulary but no topic is `not-found`; one that hits neither is `out-of-scope`. This mirrors a real retrieval-confidence gate and is the seam a real backend plugs into.
+
+| Situation | Message | Affordance |
+|---|---|---|
+| `out-of-scope` — question isn't about Avante's security operations at all | "I'm focused on Avante's security operations — protocols, procedures, and site guidelines. I can't help with that one. Try asking about access control, incident reporting, patrols, emergencies, or shift handover." | none |
+| `not-found` — within security operations, but no Library content covers it | "That's within security operations, but I don't have anything on it in the Library yet. Try rephrasing, or ask your manager if you think it should be here." | inline "Browse the Library" link (→ `/library`) |
+
+**Tone:** same as the phrasing table — plain, no blame, no exclamation marks, sentence case. First-person ("I…"); never refer to Cortex in the third person mid-conversation. Escalate to "your manager" (universal across shift/certification status), never "shift supervisor".
+
+---
+
 ## Modals / overlays
 
 - **Backdrop:** `rgba(17, 24, 39, 0.4)` at `160ms` fade.
@@ -390,6 +405,7 @@ All animation collapses to imperceptible durations under `prefers-reduced-motion
 | Radial glow on canvas | `cortex/src/app/(app)/chat/page.tsx` |
 | Nav active pill state | `cortex/src/components/cortex-sidebar.tsx` |
 | Empty-state copy | `cortex/src/app/(app)/chat/page.tsx` |
+| Chat non-answers + citation gating | `cortex/src/lib/chat-mock.ts` (`resolveResponse`, `ChatResponse`) |
 | Error wiring (toast + field-error) | `cortex/src/components/ui/toast.tsx` (helper + `<Toaster />`); `.field-error` in `globals.css` |
 | Mobile bottom tab bar | `cortex/src/components/mobile-tab-bar.tsx` |
 | AI thinking indicator + streaming caret | `cortex/src/components/chat/ThinkingIndicator.tsx` |
