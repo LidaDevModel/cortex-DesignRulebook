@@ -1,0 +1,91 @@
+{
+  "skill_name": "design-contract",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I just installed some design rules in my Cursor project and opened a React component. How should I set up my design preferences?",
+      "expected_output": "Should fire the Initial Response gate first (confirmation message + wait for user reply), then if confirmed, describe a structured two-group questionnaire: Group 1 (multiple choice: aesthetic gravity, color mode, density, animation philosophy) followed by Group 2 (free-text: reference products, anti-references, typography taste, signature detail). Should check for existing design-taste.mdc first.",
+      "expectations": [
+        "Responds with the Initial Response gate first: a confirmation message asking 'Ready to set up your Design Fleet taste profile' with yes/no/sample options, and explicitly waits for user reply before launching the questionnaire",
+        "Checks for existing design-taste.mdc before starting the questionnaire",
+        "Asks whether this is a project-level or personal profile",
+        "Presents Group 1 questions as multiple choice (aesthetic gravity, color mode, density, animation)",
+        "Presents Group 2 after receiving Group 1 answers, not all at once",
+        "Group 2 includes anti-references question (products the user dislikes)"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Generate a design taste profile for someone who says: I like Linear and Stripe, I hate Notion's playfulness, I prefer dark mode, dense layouts, and almost no animation. My favorite font is Söhne.",
+      "expected_output": "Should produce a design-taste.mdc file with frontmatter (description, globs, alwaysApply: true) and sections for Aesthetic Direction, Color, Typography, Density, Motion, and Signature Detail — all reflecting the specific answers given.",
+      "expectations": [
+        "Output is a .mdc file with YAML frontmatter including alwaysApply: true",
+        "Aesthetic Direction section includes 'dense' and 'precise' or similar, references Linear and Stripe",
+        "Anti-references section captures Notion's playfulness as something to avoid",
+        "Typography section mentions Söhne as a preferred font",
+        "Motion section reflects 'almost none' philosophy with specific constraints like sub-200ms or no hover animations"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "I'm setting up design onboarding for a project that already has a Next.js app with Tailwind, Inter font, and a components/ui directory. What should the process look like?",
+      "expected_output": "Should fire the Initial Response gate first and check whether design-taste.mdc already exists. If confirmed, should describe scanning the existing codebase for design surface (fonts, colors, component library) before the questionnaire, and including a 'Current Project DNA' section in the generated taste profile.",
+      "expectations": [
+        "Responds with the Initial Response gate first and explicitly mentions checking whether design-taste.mdc already exists in the project, asking whether to regenerate it if so, before proceeding",
+        "Scans existing code for design surface before or during onboarding (globals.css, tailwind config, fonts, components/ui)",
+        "Notes that Inter is the current font but flags it as a Design Fleet anti-pattern to discuss",
+        "Includes a 'Current Project DNA' section in the output taste profile",
+        "Preserves existing patterns that are intentional while flagging what to migrate"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Assess the design quality of a Next.js project that has: globals.css with 4 CSS variables for colors and 12 hardcoded hex values in components, Inter as the only font, box-shadow used in 3 places with different directions, no prefers-reduced-motion anywhere, and a components/ui directory with shadcn components.",
+      "expected_output": "Should produce a structured audit covering all 7 dimensions (typography, colors, spacing, shadows, animation, components, keyboard) with Solid/Partial/Missing ratings, Top 5 opportunities, a migration order, and end by offering draft mode — not by generating a design-context.mdc file.",
+      "expectations": [
+        "Extracts typography profile and flags Inter as the primary font",
+        "Counts colors: 4 CSS variables vs 12 hardcoded, rates as Partial",
+        "Identifies inconsistent shadow directions across the 3 declarations",
+        "Flags missing prefers-reduced-motion as a gap in the animation dimension",
+        "Rates each dimension as Solid, Partial, or Missing (not just descriptions)",
+        "Ends by offering to draft a VISION.md from the extraction, instead of generating design-context.mdc"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Draft a VISION.md design contract for my React app. The tokens live in src/theme/tokens.ts with ink #0f172a, surface #fcfcfd, and primary #4338ca; headings use Fraunces and body uses Inter; modals animate at 200ms with cubic-bezier(0.32, 0.72, 0, 1) via framer-motion; errors go through showError() in src/components/ui/feedback.ts.",
+      "expected_output": "Should mechanically pre-fill the tokens, typography, animation, and lint-hooks sections from the stated code facts, then run a short gap interview one question at a time (north star, hard rules, exact error strings, app-shell, selection patterns) before writing VISION.md at the project root with the template's machine-readable structure intact, then point at the wire command.",
+      "expectations": [
+        "Runs the gap interview before writing the file, asking one question at a time rather than a batch questionnaire",
+        "Pre-fills tokens, typography, and animation from the code facts instead of asking the user for values the code already reveals",
+        "Output preserves the <!-- qd-vision-template: v1 --> version marker, the <!-- qd:* --> section anchors, and the frozen table headers exactly",
+        "The declared token values #0f172a, #fcfcfd, and #4338ca appear as backticked literals in the tokens table, and src/theme/tokens.ts appears as the tokens-path lint hook",
+        "Writes VISION.md at the project root and tells the user to run npx design-fleet vision --wire (or offers to write the .cursor/rules/vision.mdc pointer and CLAUDE.md import block directly)"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Brand-new repo, zero UI code written yet. I want the project design rules and hard rails set up before we build the first screen. Create the vision doc.",
+      "expected_output": "Should recognize the greenfield path: skip code extraction entirely, run the interview only, and produce a full VISION.md where extraction-fed sections (tokens, spacing, animation, canonical examples, lint hooks) keep their [PLACEHOLDER] values so lint reports them as not-applicable rather than missing.",
+      "expectations": [
+        "Skips the codebase extraction step and does not claim to have found any tokens, fonts, or timings",
+        "Conducts the gap interview one question at a time (north star, ALWAYS/NEVER rules, error strings, selection patterns)",
+        "Extraction-fed sections keep the uppercase [PLACEHOLDER] grammar instead of invented literal values",
+        "Writes the complete template structure with version marker and anchors — no sections silently dropped",
+        "Explains that placeholders fill in as the project grows and reconcile mode tracks the gap"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "We refactored src/screens/ into src/features/ last month and bumped modal animations from 200ms to 240ms. My VISION.md still says the canonical layout reference is src/screens/OnboardingStep.tsx and modal cards animate at 200ms. Check the vision doc against the code.",
+      "expected_output": "Should run reconcile mode (not a re-draft): verify canonical paths, detect that src/screens/OnboardingStep.tsx no longer exists, detect the 200ms vs 240ms timing contradiction, and for each finding ask whether the doc or the code is the source of truth, proposing the specific edit for the chosen side.",
+      "expectations": [
+        "Defaults to reconcile mode because VISION.md exists — does not start a fresh draft or overwrite the doc",
+        "Detects that src/screens/OnboardingStep.tsx no longer exists and reports it as a stale canonical path",
+        "Proposes a specific doc edit pointing the canonical layout row at the moved file under src/features/",
+        "Reports the 200ms (doc) vs 240ms (code) contradiction with both values quoted",
+        "Asks per finding which side is the source of truth instead of silently editing the doc or the code"
+      ]
+    }
+  ]
+}

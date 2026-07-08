@@ -1,0 +1,30 @@
+---
+paths: "**/*.{tsx,jsx,ts,js,vue,svelte}"
+---
+
+# Design Fleet -- Keyboard Shortcuts
+
+9 keyboard conventions every web app must support. When building interactive components, wire these up and show shortcut hints in tooltips.
+
+## Conventions
+
+| Shortcut | Action | Notes |
+|----------|--------|-------|
+| `Escape` | Close the current overlay | Modals, drawers, popovers, dropdowns, command palette — Escape always exits. No exceptions. |
+| `Enter` | Confirm the primary action | Submit forms, click the focused button (Save, Login, Confirm). Enter = "do the obvious thing." |
+| `Cmd+K` | Open command palette / search | The universal launcher. Users expect this from Linear, Slack, GitHub, Vercel, Raycast. |
+| `Cmd+/` | Toggle help or shortcut cheat sheet | Show available shortcuts in context. |
+| `Cmd+S` | Toggle sidebar (opinionated) | This overrides browser Save Page — only use if the app has no file-save semantics. Consider `Cmd+B` or `Cmd+\` as less surprising alternatives. |
+| `Cmd+Backspace` | Delete selected item | Must trigger a confirmation dialog. Never delete silently. |
+| `Cmd+A` | Select / highlight all text | Respect native behavior in text inputs. Override only in custom list/grid contexts to select all items. |
+| `Arrow keys` | Navigate lists, menus, tabs | Move focus through items. Never animate focus movement — instant only. |
+| `Tab` / `Shift+Tab` | Move focus forward / backward | Standard focus traversal through interactive elements. Never trap focus outside of modals. |
+
+## Rules
+
+- **Cross-platform mapping** — `Cmd` on macOS becomes `Ctrl` on Windows/Linux. Use `event.metaKey` (Mac) vs `event.ctrlKey` (Win/Linux) to detect the modifier. For display glyphs (`⌘` vs `Ctrl`), check `navigator.platform` or `navigator.userAgentData.platform`.
+- **Never override sacred browser shortcuts** — `Cmd+C`, `Cmd+V`, `Cmd+X` (clipboard), `Cmd+T` (new tab), `Cmd+W` (close tab), `Cmd+R` (reload), `Cmd+L` (address bar). These belong to the browser.
+- **Show shortcut hints** — Tooltips on buttons and menu items should display the keyboard shortcut in a `<kbd>` element. "Toggle sidebar ⌘S" not just "Toggle sidebar."
+- **No animation on keyboard actions** — Arrow key navigation, Tab focus, Enter confirmation — all instant. Animation adds latency to actions users repeat hundreds of times.
+- **Focus must be visible** — Every element reachable by Tab must have a visible focus ring. Use `focus-visible` to show rings only on keyboard navigation, not mouse clicks.
+- **Scope shortcuts to context** — `Cmd+Backspace` deletes only when an item is selected. `Arrow keys` navigate only when a list/menu is focused. Shortcuts must not fire globally when the user is typing in an input field.

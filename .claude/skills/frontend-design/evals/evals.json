@@ -1,0 +1,149 @@
+{
+  "skill_name": "frontend-design",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Build me a card component for a SaaS dashboard. Use a clean, modern style.",
+      "expected_output": "Should NOT default to Inter, Roboto, or system fonts. Should use tinted near-black/near-white instead of pure #000/#fff. Should use layered shadows, not a single box-shadow.",
+      "expectations": [
+        "Does not use Inter, Roboto, Arial, or system-ui as the font choice",
+        "Does not use pure #000 or #fff — uses tinted near-black/near-white instead",
+        "Uses layered (multi-value) box-shadow for depth, not a single shadow",
+        "Defines colors as CSS custom properties or design tokens, not hardcoded hex in the component",
+        "Does not use bounce or elastic easing"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I have a Next.js app with Tailwind v4 and a components/ui/ directory with existing Button and Input components from shadcn. I need a new DataTable component. How should I approach this?",
+      "expected_output": "Should check for and reuse the existing shared UI library (shadcn components) rather than building from scratch. Should follow the project's existing component patterns.",
+      "expectations": [
+        "Checks for existing shared UI library before creating new base components",
+        "Reuses existing shadcn Button and Input components rather than creating new ones",
+        "Places the component in the project's component directory structure",
+        "Mentions text truncation in tables requires a wrapper div with truncate class (td ignores overflow: hidden)",
+        "Respects the RSC boundary — only adds 'use client' if the component needs interactivity"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "My app has a main content area that sometimes overflows and sometimes doesn't. When it switches between overflowing and not, the layout shifts because the scrollbar appears/disappears. How should I fix this?",
+      "expected_output": "Should recommend overflow-y: scroll on the main container with custom thin scrollbar styling, NOT scrollbar-gutter: stable.",
+      "expectations": [
+        "Recommends overflow-y: scroll to always reserve scrollbar space",
+        "Does NOT recommend scrollbar-gutter: stable (conflicts with custom thin scrollbar overrides)",
+        "Suggests custom CSS for invisible scrollbar that reveals on hover",
+        "Mentions the width mismatch issue between browser default scrollbar and custom 6px width"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Build a media gallery where clicking thumbnails opens a lightbox with the full-size image. The user can tap different thumbnails in quick succession, and I want smooth morphing transitions from thumbnail to full screen, with the backdrop darkening in sync. I'm on React; performance matters — I'm targeting 60fps. Build the complete implementation.",
+      "expected_output": "Production-grade shared-element implementation preferring the native View Transitions API: unique per-image transition names, cleanup of the source name inside the transition callback, backdrop paired with the image on identical easing/duration, and customized ::view-transition-group timing instead of the default crossfade.",
+      "expectations": [
+        "The image morphs between states using the browser's native view-transition mechanism rather than a JS animation library, so the transition runs compositor-side for 60fps",
+        "Each thumbnail-to-lightbox transition gets a distinct identifier derived from the image id, so different images can transition without name collisions",
+        "The source element's transition name is cleared inside the startViewTransition callback before the target receives it, preventing stale-name collisions when transitions repeat",
+        "The backdrop and the image animate with the same easing curve and duration so they read as one coordinated motion, not two independent effects",
+        "Transition timing is customized via ::view-transition-group (or equivalent pseudo-element styling) rather than relying on the default crossfade"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "I'm building a dropdown menu that appears when the user clicks a button. What easing and duration should I use for the enter and exit animations?",
+      "expected_output": "Should recommend ease-out for both enter and exit (user-initiated interaction), duration 150-250ms for standard UI, exit ~20% faster than entrance. Should pair the dropdown and any overlay with the same easing and duration.",
+      "expectations": [
+        "Recommends ease-out for the dropdown entrance (not ease-in or ease-in-out)",
+        "Recommends ease-out for exit as well (element leaving the screen)",
+        "Duration is in the 150-250ms range for standard UI elements",
+        "Exit animation is faster than entrance (approximately 20% shorter)",
+        "Paired elements rule: overlay/backdrop uses same easing and duration as the dropdown"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "I'm building a complex animated landing page section with a card that fades in, a heading that highlights, detail rows that stagger in, and a CTA button that appears last. How should I structure the animation code?",
+      "expected_output": "Should recommend the storyboard pattern: ASCII storyboard comment, TIMING object with absolute ms values, element config objects (UPPERCASE), stage-driven sequencing with a single stage integer state.",
+      "expectations": [
+        "Recommends an ASCII storyboard comment at the top with right-aligned ms values",
+        "Uses a single TIMING object with absolute ms values (not deltas between stages)",
+        "Element configs are UPPERCASE named objects (e.g., CARD, ROWS) grouping all values for one element",
+        "Uses a single stage integer state with setTimeout chain, not scattered boolean flags",
+        "JSX uses stage >= N checks for progressive reveal"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "Build a dashboard page with 6 collapsible card sections (each expands/collapses on click to reveal more data). The page loads with a staggered fade-in. Users frequently navigate from here to a detail page that takes 200-300ms to load, and I want that navigation to feel instant. I'm on React + Framer Motion. Implement the height animation on expand, the reduced-motion support, and the prefetch strategy.",
+      "expected_output": "Production-grade implementation showing the container-animation lifecycle (ResizeObserver via callback ref, zero-bounds guard, overflow clipping), a complete reduced-motion opt-out, and intent-based prefetching beyond simple hover.",
+      "expectations": [
+        "Container height animates smoothly on expand/collapse using ResizeObserver to measure content (not re-measuring with getBoundingClientRect on every render), avoiding layout thrashing",
+        "The measurement hook attaches via a callback ref so the observer connects exactly when the node mounts, never missing the initial measurement",
+        "Guards the initial zero-bounds measurement by falling back to 'auto' until a positive size is observed, so nothing visibly pops open on mount",
+        "Content clips cleanly during the height transition (overflow hidden on the animating container) instead of spilling outside mid-animation",
+        "Reduced-motion support disables the animations entirely (media query or hook) — instant state changes, not merely shorter durations",
+        "The detail-page link prefetches on predicted intent (cursor trajectory / expanded intent area), not just onMouseEnter, so the 200-300ms load is hidden before the click"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Before I start building, I need to understand the project's design contract and component inventory. My project has a VISION.md at the root with defined animation timing rules and a COMPONENTS.md file generated by npx design-fleet inventory that documents existing reusable components (buttons, modals, data tables, forms). I'm about to build a new expandable form section component and a drag-to-dismiss card animation. Walk me through your complete workflow before writing any code — what do you check first, how do you handle the reuse gate, what does the motion timing layer expect, and what contract rules would override generic guidance?",
+      "expected_output": "Demonstrates the contract-first workflow: VISION.md read as the binding contract (its timing table overrides generic durations), COMPONENTS.md searched by problem before building, reuse-or-evolve-in-place over forking, spring physics for the gesture-driven dismissal, and a complete reduced-motion opt-out for both animations.",
+      "expectations": [
+        "Starts by reading VISION.md and treats it as the binding project contract that overrides both the taste profile and generic skill guidance",
+        "Uses the animation-timing table from VISION.md for durations instead of generic defaults, when the table exists",
+        "Searches COMPONENTS.md by the problem being solved (expandable sections, drag interactions) rather than by a component's visual name",
+        "Reuses or extends an existing component in place rather than forking a near-duplicate, and only builds new after finding nothing that covers the need",
+        "Identifies drag-to-dismiss as gesture-driven motion requiring spring physics with velocity passthrough, not a fixed CSS easing curve",
+        "Requires a complete reduced-motion opt-out for both animations (disabled entirely, not shortened)"
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "I want to add a decorative line under my heading using CSS. Should I add an empty <span> element or use a pseudo-element? And what CSS properties are required?",
+      "expected_output": "Should recommend ::after pseudo-element over an extra DOM node. Must mention content: '' as required, and position: relative on the parent for absolute positioning.",
+      "expectations": [
+        "Recommends ::after pseudo-element instead of an extra DOM node",
+        "Specifies that content: '' (or content: \"\") is required for the pseudo-element to render",
+        "Requires position: relative on the parent element for absolute pseudo-element positioning",
+        "Mentions z-index layering if the pseudo-element needs to sit behind text"
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "I need to animate a container's height when its content changes (like an accordion opening/closing). How should I structure the React component?",
+      "expected_output": "Should describe the two-div pattern: outer motion.div animates the size, inner div holds the measurement ref. Should use ResizeObserver, not getBoundingClientRect. Should guard initial bounds of 0.",
+      "expectations": [
+        "Describes the two-div pattern: outer animated div and inner measured div, never the same element",
+        "Uses ResizeObserver for measurement, not getBoundingClientRect on every render",
+        "Guards against initial bounds of 0 by falling back to 'auto' until bounds are positive",
+        "Sets overflow: hidden on the animated container during transitions",
+        "Uses a callback ref (not useRef) for reliable ResizeObserver lifecycle"
+      ]
+    },
+    {
+      "id": 11,
+      "prompt": "I want to prefetch the next page when the user's cursor moves toward a link, before they actually hover over it. What pattern should I use?",
+      "expected_output": "Should recommend trajectory-based prediction (like ForesightJS) over simple onMouseEnter prefetch, which reclaims 100-200ms. Should mention hitSlop for earlier prediction and touch device fallback.",
+      "expectations": [
+        "Recommends trajectory prediction over simple hover/onMouseEnter prefetch",
+        "Mentions the 100-200ms advantage that trajectory prediction reclaims",
+        "Recommends hitSlop to trigger predictions earlier (larger hit area)",
+        "Includes touch device fallback since there's no cursor on touch devices",
+        "Advises selective use: only where navigation latency is noticeable, not on every link"
+      ]
+    },
+    {
+      "id": 12,
+      "prompt": "I want to add a page transition animation between routes in my Next.js app. Should I use Framer Motion's layoutId/AnimatePresence or the View Transitions API?",
+      "expected_output": "Should recommend the View Transitions API over JS library approaches for page transitions. Should mention view-transition-name as required, names must be unique during transition, and cleanup after completion.",
+      "expectations": [
+        "Recommends View Transitions API over JS library (Framer Motion layoutId) for page transitions",
+        "Specifies that view-transition-name is required on participating elements",
+        "Each transition name must be unique during the transition",
+        "Transition names should be cleaned up after completion",
+        "Mentions styling via ::view-transition-group pseudo-elements for custom animation"
+      ]
+    }
+  ]
+}

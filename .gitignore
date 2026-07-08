@@ -1,0 +1,10 @@
+# The app has its own separate repo/history — never nest it here
+/cortex/
+
+# Local Claude Code tooling config (machine-specific, not design rules)
+.claude/settings.local.json
+.claude/launch.json
+
+# Mac + local backup junk
+.DS_Store
+.claude-backup-*/

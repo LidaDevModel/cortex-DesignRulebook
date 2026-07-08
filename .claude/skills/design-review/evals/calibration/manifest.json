@@ -1,0 +1,14 @@
+{
+  "purpose": "Calibration corpus for the subjective design-review gate. Before the judge's 0-1 score on a real screen is allowed to GATE, it must score these anchors and separate good from slop. lib/calibration.mjs checkCalibration() requires every 'good' anchor to beat every 'slop' anchor by `margin`; otherwise the real-screen score is advisory and the deterministic lint floor stays the only gate.",
+  "margin": 0.15,
+  "render": "Host-side. The package ships no browser. For each anchor the host renders `source` to a screenshot and passes it to the judge, which scores it with references/rubric.md. The judge must never see the `kind` or `expectedBand` of an anchor while scoring it.",
+  "howToFill": "FILLED (bootstrap corpus, 2026-06-30). Good anchors are live product URLs the maintainer holds as the bar; slop anchors are self-contained HTML files in slop/ that deliberately violate the fleet's rules (do not improve them). To re-tune calibration to a specific project, replace the good URLs with that project's VISION.md canonical-example screens.",
+  "anchors": [
+    { "id": "good-1", "kind": "good", "label": "Linear — product/marketing site", "source": "https://linear.app", "expectedBand": [0.8, 1.0], "why": "exemplary — intentional hierarchy, custom type, considered spacing and a clear point of view" },
+    { "id": "good-2", "kind": "good", "label": "Raycast — product/marketing site", "source": "https://www.raycast.com", "expectedBand": [0.8, 1.0], "why": "exemplary craft and restraint; dark-theme discipline, dense but calm" },
+    { "id": "good-3", "kind": "good", "label": "Curated Supply — editorial gallery/shop", "source": "https://www.curated.supply", "expectedBand": [0.75, 1.0], "why": "confident, distinctive, editorial point of view; consistent primitives" },
+    { "id": "slop-1", "kind": "slop", "label": "Default admin template (stock cards + bordered table + Submit)", "source": "slop/admin-template.html", "expectedBand": [0.0, 0.35], "why": "no point of view, stock components, identical card grid, pure #fff/#000, default look" },
+    { "id": "slop-2", "kind": "slop", "label": "Generic AI-default landing (Inter, purple-on-white gradient)", "source": "slop/ai-default-landing.html", "expectedBand": [0.0, 0.35], "why": "the exact generic-AI aesthetic the fleet exists to avoid" },
+    { "id": "slop-3", "kind": "slop", "label": "Near-unstyled form (placeholder-only labels, 'Submit', raw error)", "source": "slop/unstyled-form.html", "expectedBand": [0.0, 0.3], "why": "system fonts, no hierarchy, raw spacing, blaming error copy" }
+  ]
+}

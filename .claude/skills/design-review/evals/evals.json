@@ -1,0 +1,159 @@
+{
+  "skill_name": "design-review",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Critique this dashboard UI: it has a sidebar with 12 navigation items, a header with user stats, a large chart, and a data table below. Everything uses the same font weight and similar sizes. There are 4 different background colors. The primary action button says 'Submit'.",
+      "expected_output": "Should follow the required output format: exactly 7 H2 sections (Context, First Impressions, Visual Design, Interface Design, Consistency & Conventions, User Context, Top Opportunities) with each issue using the bold Issue Name + em dash + three-sentence pattern. Should be specific and quantitative.",
+      "expectations": [
+        "Follows the required output format: exactly 7 H2 sections in order — Context, First Impressions, Visual Design, Interface Design, Consistency & Conventions, User Context, Top Opportunities",
+        "Each issue uses the bold Issue Name + em dash + three-sentence pattern (factual observation, impact on user, opportunity); never bare bullets and never hedging language like 'maybe' or 'I think'",
+        "Closes with a Top Opportunities section: a ranked list of 3-5 highest-impact changes ordered structural > behavioral > visual, each in one sentence",
+        "Identifies the lack of typographic hierarchy as a specific visual design issue (same weight/size across elements)",
+        "Counts the 4 background colors and critiques them as competing rather than establishing hierarchy",
+        "Frames interface design issues as missed opportunities, not just problems",
+        "Critiques 'Submit' as generic button text and recommends a specific action-descriptive alternative"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I have a file upload component. The drop zone has a dashed border, a cloud icon, and text that says 'Drag and drop files here or click to browse.' After upload it shows a green checkmark and 'Upload successful.' If there's an error it shows a red X and 'Error: something went wrong.' Critique this.",
+      "expected_output": "Should identify the error message as a structural issue (worst severity), critique the generic success state, and suggest improvements following the severity ordering: structural > behavioral > visual.",
+      "expectations": [
+        "Each issue uses the bold Issue Name + em dash + three-sentence pattern (factual observation, impact, opportunity); never bare bullets and never hedging language like 'maybe' or 'I think'",
+        "Orders issues by severity: structural/behavioral before visual",
+        "Identifies 'Error: something went wrong' as a critical issue — not specific, not actionable, no recovery path",
+        "Suggests the error message should name what went wrong and what to do next (the 3-part error formula)",
+        "Evaluates the success state as a missed opportunity for more useful feedback (file name, size, next action)",
+        "Uses factual-first voice: describes what exists before judging it"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Review a checkout page for an e-commerce site. It shows all 5 steps (shipping, billing, review, payment, confirmation) simultaneously on one page, each in its own card. The page has 40+ form fields visible at once. The user is buying a $2,000 laptop.",
+      "expected_output": "Should engage the User Context dimension — high-stakes purchase, likely anxious user — and critique the information architecture as overwhelming.",
+      "expectations": [
+        "Follows the required output format: exactly 7 H2 sections in order — Context, First Impressions, Visual Design, Interface Design, Consistency & Conventions, User Context, Top Opportunities",
+        "Each issue uses the bold Issue Name + em dash + three-sentence pattern (factual observation, impact, opportunity); never bare bullets and never hedging language like 'maybe' or 'I think'",
+        "Identifies the user's emotional context: high-stakes purchase, likely anxious or careful",
+        "Critiques showing all 5 steps simultaneously as overwhelming — violates progressive disclosure",
+        "Quantifies the problem: 40+ form fields visible at once",
+        "Suggests step-by-step wizard or progressive disclosure as the alternative",
+        "Connects the UI critique to user emotion: 'This design adds cognitive burden to an already stressful decision'"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Give me feedback on a settings page that has perfect alignment, consistent spacing, and clean typography, but every toggle switch has a 500ms bounce animation, there's no way to undo changes, and the save button says 'OK'.",
+      "expected_output": "Should acknowledge the visual quality while critiquing interaction design issues. Should not pad with empty compliments.",
+      "expectations": [
+        "Each issue uses the bold Issue Name + em dash + three-sentence pattern (factual observation, impact, opportunity); never bare bullets and never hedging language like 'maybe' or 'I think'",
+        "Acknowledges visual quality specifically (alignment, spacing, typography) without padding with generic praise",
+        "Critiques the 500ms bounce animation on toggles as excessive for a high-frequency interaction",
+        "Identifies missing undo/cancel as a control issue (users can't reverse actions)",
+        "Critiques 'OK' as non-descriptive button text, recommends 'Save settings' or similar",
+        "Does not hedge with 'maybe' or 'perhaps' — uses decisive language"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Run a heuristic review on a CMS admin panel that has: a save button with no feedback after clicking, a delete button with no confirmation dialog, form fields that submit without client-side validation, and error messages that show 'Error 500: Internal Server Error' to the user.",
+      "expected_output": "Should switch to Nielsen Heuristic Mode — NOT the 7-section critique format: walk all 10 heuristics in order, rate violations with the cosmetic/minor/major/catastrophic vocabulary, and identify H1 (no save feedback), H5 (no delete confirmation, no validation), and H9 (raw error codes).",
+      "expectations": [
+        "Uses the Nielsen Heuristic Mode checklist format covering all 10 heuristics H1-H10 in order, not the 7-section critique format (no Context/First Impressions/Top Opportunities headers)",
+        "Identifies H1 violation: no feedback after save (System Status)",
+        "Identifies H5 violation: delete without confirmation and form submits without validation (Error Prevention)",
+        "Identifies H9 violation: raw 'Error 500' shown to user instead of plain language (Error Recovery)",
+        "Rates every violation using only the severity vocabulary cosmetic/minor/major/catastrophic — e.g. H5 delete-without-confirm as catastrophic (causes data loss)",
+        "Checks all 10 heuristics systematically, explicitly marking heuristics with no violations rather than omitting them"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "I'm building a new settings page with toggles, dropdowns, and a save button. How should I apply Nielsen's usability heuristics during the build process, before I've even implemented it?",
+      "expected_output": "Should describe the proactive application from Nielsen Heuristic Mode: scan the 10-heuristic checklist before implementation, prioritize H1 (status), H3 (control), H5 (error prevention), then do a final pass against all 10 after implementation.",
+      "expectations": [
+        "Recommends scanning the 10-heuristic checklist before implementation to anticipate issues",
+        "Prioritizes H1 (status feedback), H3 (user control/undo), and H5 (error prevention) as the most impactful",
+        "Suggests a final pass against all 10 heuristics after implementation",
+        "Mentions specific patterns: toast after save (H1), Escape to cancel (H3), confirmation for destructive toggles (H5)"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "Do a formal heuristic evaluation of this data table UI: it has 200 rows with no pagination, column headers that use field names like 'instructorId' and 'createdAt', truncated text in cells with no way to see the full content, and an empty state that just shows a blank white area when there's no data.",
+      "expected_output": "Should use Nielsen Heuristic Mode: structured checklist output mapping each issue to the specific heuristic it violates with a cosmetic/minor/major/catastrophic severity rating, not the 7-section critique format.",
+      "expectations": [
+        "Uses the Nielsen Heuristic Mode checklist format with per-heuristic severity ratings, not the 7-section critique format",
+        "Identifies H2 violation: 'instructorId' and 'createdAt' are developer jargon, should be 'Instructor' and 'Created' (Real-world match)",
+        "Identifies H6 violation: truncated text with no tooltip or expand option (Recognition over Recall)",
+        "Identifies H10 violation: empty state shows blank area instead of guidance/CTA (Help and Documentation)",
+        "Identifies H7 violation: 200 rows with no pagination, search, or sorting (Flexibility and Efficiency)",
+        "Assigns severity using only the cosmetic/minor/major/catastrophic vocabulary: major for H2 (significant confusion), minor for H6 and H10 (polish)"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Lint this React component:\n\n```tsx\nimport { motion } from 'framer-motion';\n\nexport function Card({ children }) {\n  return (\n    <motion.div\n      initial={{ opacity: 0, y: 20 }}\n      animate={{ opacity: 1, y: 0 }}\n      style={{\n        background: '#fff',\n        boxShadow: '0 2px 8px rgba(0,0,0,0.15)',\n        borderRadius: 12,\n        padding: 37,\n      }}\n    >\n      {children}\n    </motion.div>\n  );\n}\n```",
+      "expected_output": "Should produce a structured lint report with specific violation IDs, file locations, and fixes for: pure white background (V5), pure black shadow (V1), arbitrary 37px padding (V7), and missing prefers-reduced-motion (A3).",
+      "expectations": [
+        "Identifies V5 violation: #fff is pure white, recommends tinted near-white",
+        "Identifies V1 violation: rgba(0,0,0,0.15) is pure black shadow, recommends tinted dark color",
+        "Identifies V7 violation: 37px padding is not on the 4/8/12/16/24/32/48/64 spacing scale",
+        "Identifies A3 violation: motion.div animate without prefers-reduced-motion handling",
+        "Uses the structured report format with violation IDs (V1, V5, V7, A3)",
+        "Each violation entry carries a severity tag on its heading line (**error** for I/W1/R1/A3, **warning** for V/T/C/A1-A2-A4-A5, **info** for W2/W4/I4) and includes all five fields: rule ID, file path with line number, found snippet, fix snippet",
+        "Orders violations errors first, then warnings, then info — A3 (error) appears before V1, V5, V7 (warnings)"
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "Check this form component for design rule compliance:\n\n```tsx\nexport function LoginForm() {\n  return (\n    <form>\n      <input type=\"email\" placeholder=\"Email address\" />\n      <input type=\"password\" placeholder=\"Password\" />\n      <button style={{ outline: 'none' }}>Submit</button>\n    </form>\n  );\n}\n```",
+      "expected_output": "Should identify: placeholder-only labels (W1), generic 'Submit' button text (W2), outline:none without focus-visible replacement (I2).",
+      "expectations": [
+        "Identifies W1 violation: inputs have placeholder but no label or aria-label",
+        "Identifies W2 violation: 'Submit' is generic button text, should describe the action (e.g., 'Sign in')",
+        "Identifies I2 violation: outline: none without a :focus-visible replacement",
+        "Each violation entry carries a severity tag on its heading line (**error** for I2 and W1, **info** for W2) and includes all five fields: rule ID, file path with line number, found snippet, fix snippet",
+        "Orders violations by severity: I2 and W1 (errors/a11y) before W2 (info)"
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "I just generated a bunch of UI code with the frontend-design skill. How do I verify it follows the rules? What does the lint process look like?",
+      "expected_output": "Should describe the full lint workflow: determine scope, run the 7 always-on check categories plus the conditional Category 8 (Project Contract) when VISION.md exists, produce structured report with pass/fail per check, violations ordered by severity (error > warning > info).",
+      "expectations": [
+        "Describes determining scope first (explicit path, recent changes, component directory, or full project)",
+        "Lists the 7 always-on check categories: Visual Design, Typography, Color, Animation, Interaction, UX Writing, Responsive",
+        "Mentions the conditional Category 8 (Project Contract) that activates when VISION.md exists at the project root — deterministic P-checks via `npx design-fleet lint` plus the LLM-judged checks",
+        "Explains the output format: structured report with violation IDs, file locations, and inline fixes",
+        "Orders severity: errors (a11y/interaction) before warnings (design quality) before info (opportunities)",
+        "Describes the build-lint-fix-relint chain as the intended workflow"
+      ]
+    },
+    {
+      "id": 11,
+      "prompt": "My project has a VISION.md contract. Lint this modal component against it.\n\nVISION.md (excerpt):\n\n```markdown\n<!-- qd-vision-template: v1 -->\n\n<!-- qd:tokens -->\n## Design tokens\n\n| Token | Value | Use |\n|---|---|---|\n| `color.ink` | `#0f172a` | Body text |\n| `color.surface` | `#fcfcfd` | Cards, modals |\n\n<!-- qd:animation -->\n## Animation timing\n\n| Where | Duration | Easing |\n|---|---|---|\n| Modal card scale + opacity | `200ms` | `ease-out` |\n```\n\ncomponents/Modal.tsx:\n\n```tsx\nexport function Modal({ children }) {\n  return (\n    <div\n      style={{\n        background: '#fcfcfd',\n        color: '#1e293b',\n        transition: 'transform 280ms ease-out, opacity 280ms ease-out',\n      }}\n    >\n      {children}\n    </div>\n  );\n}\n```",
+      "expected_output": "Should run Category 8's deterministic half via `npx design-fleet lint`, report P1 for the undeclared `#1e293b` (not in the token map) and P7 for the `280ms` durations (not on the declared 200ms allowlist), note that declared token values suppress V1/V5 false positives (suppressions reported, never silent — `#fcfcfd` passes because it is declared), and keep the five-field violation format.",
+      "expectations": [
+        "Mentions running the deterministic engine first: `npx design-fleet lint` for Category 8's P-checks",
+        "Reports a P1 violation: `#1e293b` is not in the declared token map (while `#fcfcfd` passes because it is declared)",
+        "Reports a P7 violation: `280ms` is not on the declared animation-timing allowlist (`200ms`)",
+        "Notes the V1/V5 suppression semantics: declared token values suppress the generic pure-black/white checks' false positives, and suppressions are reported, never silent",
+        "Each violation entry keeps the five-field format: rule ID, file path with line number, found snippet, fix snippet, and a severity tag on the heading line"
+      ]
+    },
+    {
+      "id": 12,
+      "prompt": "My VISION.md has a goal `G3 | Pricing page feels on-brand | agent: design-review | active`. I want a pass/fail design-quality verdict on the rendered /pricing page so the build loop can gate on it — not just prose feedback. How do you produce that, and when are you actually allowed to fail the build on it?",
+      "expected_output": "Should invoke Scored Mode: score the RENDERED screenshot (not the code) 0-1 on the four weighted axes with a justification paragraph, calibrate against the reference-good/slop corpus via checkCalibration (separation >= 0.15) BEFORE gating, fall back to advisory when not calibrated, and note that a failed agent: goal is still human-promoted (verify never auto-promotes).",
+      "expectations": [
+        "Scores the actual RENDERED screenshot of /pricing, not the JSX/source — and refuses to gate on code alone (stays advisory when no render is available)",
+        "Produces a 0-1 score across the four weighted axes (design, craft, originality, functionality) with a required justification paragraph — never a bare number",
+        "Calibrates FIRST: scores the reference-good and reference-slop calibration corpus and requires the worst good anchor to beat the best slop anchor by the margin (0.15), via checkCalibration, before the score may block",
+        "When the judge is NOT calibrated, the score is advisory only and the deterministic lint floor stays the sole gate — an unproven subjective judge never fails the build",
+        "Notes that a failed agent: goal is reported for human promotion, not auto-failed or auto-promoted (design-fleet verify never auto-promotes)"
+      ]
+    }
+  ]
+}
