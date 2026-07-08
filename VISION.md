@@ -59,8 +59,8 @@ Avante Cortex is a proprietary AI-powered knowledge and training platform built 
 
 | Hook | Value |
 |---|---|
-| `error-helper` | [ERROR HELPER FUNCTION NAME] |
-| `field-error-class` | [FIELD ERROR CLASS NAME] |
+| `error-helper` | `showToast` |
+| `field-error-class` | `field-error` |
 | `app-shell-helper` | [PATH/TO/SHELL HELPER] |
 | `icon-package` | lucide-react |
 | `tokens-path` | `cortex/src/app/globals.css` |
@@ -109,17 +109,21 @@ Reference only — the live source is the `.dark` block of `cortex/src/app/globa
 | `color.ink` | `#ffffff` |
 | `color.inkMuted` | `#c5c5c5` |
 | `color.background` | `#1a1a1a` |
-| `color.surface` | `#353535` |
-| `color.surfaceRaised` | `#3d3d3d` |
+| `color.surface` | `#1c1c1c` (swapped with the document-page token; pages read `--doc-page-bg: oklch(0.27 0 0)`) |
+| `color.surfaceRaised` | `oklch(0.30 0 0)` |
 | `color.navActive` | `oklch(0.32 0.04 160)` |
-| `color.glow` | — (light only) |
-| `color.border` | `#355e50` |
+| `color.glow` | — (light only; `--canvas-glow: none` in dark) |
+| `color.border` | `oklch(0.38 0 0)` (neutral gray — matches light-mode contrast) |
 | `color.cardBorder` | `#355e50` |
 | `color.ring` | `#7fc3af` |
 | `color.accentSubtle` | `oklch(0.32 0.04 160)` |
 | `color.inputBorder` | `#355e50` |
 | `color.danger` | `#dc2626` (same) |
 | `color.dangerSurface` | `#fef2f2` (same) |
+
+### Extended token families
+
+Beyond the core map, `cortex/src/app/globals.css` is also canonical for these families (light + dark variants live there; never inline siblings): document-page tokens (`--doc-page-bg`, `--doc-text`, `--doc-text-muted`, `--doc-text-faint`, `--doc-callout-bg`, `--doc-callout-border`), illustration tokens (`--il-*`), shadow tokens (`--shadow-modal-panel`, `--shadow-input-widget`, `--shadow-floating`, `--shadow-thumb*`, `--shadow-ai-send-button`), overlay/surface tokens (`--scrim`, `--surface-glass`, `--control-border`, `--progress-track`, `--background-fileview`), ambient tokens (`--blob-1`, `--blob-2`, `--canvas-glow`, `--card-glow-shadow`), and matching-pair accents (`--match-pair-*`). Cortex tokens are registered in the `@theme inline` block, so components use utility classes (`bg-surface`, `text-doc-text-muted`, `border-input-border`) instead of inline `style` objects.
 
 ---
 
@@ -173,15 +177,16 @@ corner-shape: squircle;
 A subtle luminous bloom — centered on the main content area — using a radial gradient from `color.glow` at low opacity to transparent. It grounds the content area without competing with it. Applied to every main canvas background. Never applied to the sidebar, modals, or secondary panels.
 
 ```css
-/* Canonical glow recipe — apply to the main canvas wrapper */
-background:
-  radial-gradient(ellipse 60% 50% at 50% 40%, color-mix(in srgb, #d1f0d1 40%, transparent), transparent),
-  var(--color-background);
+/* Canonical glow recipe — the shared `.canvas-glow` class in globals.css.
+   Light mode layers --canvas-glow over --surface; dark mode resolves to none. */
+.canvas-glow {
+  background: var(--canvas-glow), var(--surface);
+}
 ```
 
 **Surfaces it must be applied to:**
-- Main canvas / content area on every screen (chat, training, library, dashboard)
-- Empty states on the main canvas
+- Main canvas / content area on every screen (chat, training, library, dashboard) — via `.canvas-glow` (with a `bg-transparent` PageHeader so the bloom reads through the top)
+- Empty states on the main canvas — the AI chat empty state uses the richer animated variant (`--blob-1`/`--blob-2` drifting radials), which counts as this technique
 
 **Never applied to:**
 - Sidebar / left nav
@@ -253,7 +258,8 @@ The active user's role is always visible in the sidebar near the avatar (desktop
 
 1. User submits.
 2. Bad fields get the class named in `field-error-class` for the error ring.
-3. A single toast/banner appears via the helper named in `error-helper`. Never inline error text under a field unless the layout pattern documents it.
+3. A single toast/banner appears via the helper named in `error-helper` (`showToast` from `cortex/src/components/ui/toast.tsx`; `<Toaster />` is mounted by the app shell). Never inline error text under a field unless the layout pattern documents it.
+   - **Documented exception:** an AI chat response failure renders inline beneath the message with a "Try again" action (the phrasing-table copy verbatim) — retry belongs next to the failed answer, not in a corner toast.
 4. The toast/banner lives at the top-right (desktop) or top (mobile) with a close button — neutral surface, no all-red backgrounds.
 5. When the user edits a field, clear that field's error state immediately on `onChange`.
 
@@ -334,6 +340,17 @@ The active user's role is always visible in the sidebar near the avatar (desktop
 | Chat history panel slide | `220ms` | `cubic-bezier(0.32, 0.72, 0, 1)` |
 | Hover / focus color shifts | `100ms` | `ease-out` |
 | AI response streaming cursor | `600ms` | `ease-in-out` (pulse) |
+| AI thinking indicator (orb breathe) | `1200ms` | `ease-in-out` (infinite) |
+| AI thinking status shimmer sweep | `2200ms` | `linear` (infinite) |
+| Message / chapter content entrance | `200ms` | `ease-out` (translateY 8px + fade) |
+| Citation chip pop-in | `150ms` | `ease-out`, staggered `60ms` per chip |
+| Card hover lift | `150ms` | `ease-out` (translateY −2px + shadow; dark mode uses background step) |
+| Quiz wrong-answer shake | `250ms` | `ease-out` (±2px) |
+| Check pop-in (quiz / results) | `250–300ms` | `cubic-bezier(0.32, 0.72, 0, 1)` |
+| Results glow bloom | `400ms` | `ease-out` |
+| Progress fill sweep | `300ms` | `ease-out` (bars animate from 0 on mount; segments stagger `80ms`) |
+
+All animation collapses to imperceptible durations under `prefers-reduced-motion: reduce` (global guard in `globals.css`).
 
 ---
 
@@ -373,7 +390,11 @@ The active user's role is always visible in the sidebar near the avatar (desktop
 | Radial glow on canvas | `cortex/src/app/(app)/chat/page.tsx` |
 | Nav active pill state | `cortex/src/components/cortex-sidebar.tsx` |
 | Empty-state copy | `cortex/src/app/(app)/chat/page.tsx` |
-| Error wiring (toast + field-error) | [PATH — not built yet: no auth/toast wiring exists] |
+| Error wiring (toast + field-error) | `cortex/src/components/ui/toast.tsx` (helper + `<Toaster />`); `.field-error` in `globals.css` |
+| Mobile bottom tab bar | `cortex/src/components/mobile-tab-bar.tsx` |
+| AI thinking indicator + streaming caret | `cortex/src/components/chat/ThinkingIndicator.tsx` |
+| Primary CTA (Button `size="cta"`) | `cortex/src/components/ui/button.tsx` |
+| Role indicator (sidebar footer) | `cortex/src/components/cortex-sidebar.tsx` + `cortex/src/lib/user-mock.ts` |
 | Role-gated route | [PATH — not built yet: no auth middleware exists] |
 
 ---
