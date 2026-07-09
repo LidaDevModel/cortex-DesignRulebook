@@ -292,6 +292,28 @@ The resolver (`resolveResponse` in `cortex/src/lib/chat-mock.ts`) is a three-tie
 
 ---
 
+## Exam simulation (practice mode)
+
+Knowledge Check → "Exam simulation", and the "Try a timed simulation" link on a module's final-quiz screen, run the **certification-exam engine in practice mode** (`?mode=simulation` on the exam route). It must mirror the real exam exactly — same timer, sections, question types, and per-section breakdown — so **only the framing changes**. A simulation never awards or records a certificate; its score is a *readiness* signal.
+
+Reuse the engine; never fork a parallel timed flow. The simulation is per **module** (exams are per module), launched from an in-progress module. It returns to wherever it was launched (a `return` param, validated as an internal path): Knowledge Check, or the module's detail screen.
+
+**Certification → practice copy swaps:**
+
+| Surface | Certification | Simulation |
+|---|---|---|
+| Pre-exam heading | "Certification exam" | "Exam simulation" (subtitle "{module} · practice run") |
+| Pre-exam rule | "Exiting at any point discards your progress." | "This is practice — no certificate is awarded. Your score shows how ready you are." |
+| In-exam header | "Certification exam" | "Exam simulation" + a "Practice" marker |
+| Start button | "Start exam" | "Start simulation" |
+| Results heading (pass / fail) | "Certified" / "Certification not awarded" | "You're ready" / "Not quite ready" |
+| Results detail | "Your certification has been recorded. Issued {date}." | "Practice score — the certification pass mark is {n}. …" (nothing recorded) |
+| Results CTA | "Back to training" / "Back to module" | "Back to knowledge check" |
+
+**Never** show "Certified", an issued date, or a recorded-certification message in simulation, and never persist a certificate from it. Keep the per-section wrong-answer breakdown — that feedback is the point of practising.
+
+---
+
 ## Modals / overlays
 
 - **Backdrop:** `rgba(17, 24, 39, 0.4)` at `160ms` fade.
@@ -406,6 +428,7 @@ All animation collapses to imperceptible durations under `prefers-reduced-motion
 | Nav active pill state | `cortex/src/components/cortex-sidebar.tsx` |
 | Empty-state copy | `cortex/src/app/(app)/chat/page.tsx` |
 | Chat non-answers + citation gating | `cortex/src/lib/chat-mock.ts` (`resolveResponse`, `ChatResponse`) |
+| Exam simulation (practice mode) | `cortex/src/app/(app)/training/modules/[id]/exam/page.tsx` (`?mode=simulation`); `cortex/src/components/knowledge-check/KCExamSimConfig.tsx` |
 | Error wiring (toast + field-error) | `cortex/src/components/ui/toast.tsx` (helper + `<Toaster />`); `.field-error` in `globals.css` |
 | Mobile bottom tab bar | `cortex/src/components/mobile-tab-bar.tsx` |
 | AI thinking indicator + streaming caret | `cortex/src/components/chat/ThinkingIndicator.tsx` |
