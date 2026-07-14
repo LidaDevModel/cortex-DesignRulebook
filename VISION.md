@@ -224,8 +224,8 @@ scroll canvas.
 
 ```
 ┌──────────────────────────┐
-│  Breadcrumb              │
-│                          │
+│                     (🔔) │  ← quiet header: bell only, no breadcrumb
+│    Screen title          │    (the screen's name lives in the body)
 │    Main canvas           │
 │    (with radial glow)    │
 │                          │
@@ -252,9 +252,13 @@ focused-task screens (full content height, explicit back affordance instead):
 |---|---|
 | Home, Library home + folders, module listings, Knowledge Check listing/config, Profile | AI Chat (back affordance: "‹ Home"), open document, module detail, active Knowledge Check session, exam |
 
+**Mobile header:** breadcrumbs are a desktop pattern — on mobile the top bar carries **no breadcrumb and no title**, only the notifications bell (right). Each screen's name lives in its body (the big page title, or a detail screen's back-link + title block). On focused-task screens (where the bell also hides) the bar collapses entirely — no empty strip. Desktop keeps the full breadcrumb. Exception: AI Chat keeps its conversation name in the header (a switcher, not a breadcrumb).
+
 **Canonical reference:** see the **Canonical examples** table.
 
-**Active nav state:** pill-shaped highlight using `color.navActive` background and `color.primary` text + icon. Never underline, never border — pill only.
+**Active nav state:**
+- **Desktop sidebar** — pill-shaped highlight using `color.navActive` background and `color.primary` text + icon. Never underline, never border — pill only.
+- **Mobile tab bar** — colour only: the active tab's icon and label turn `color.primary`, inactive stay muted. No pill/background behind the icon (a chip there reads heavy on the floating bar). The satellite avatar shows its active state with a `color.ring` ring, not a pill.
 
 ---
 
