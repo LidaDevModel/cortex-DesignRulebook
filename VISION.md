@@ -205,7 +205,7 @@ A subtle luminous bloom — centered on the main content area — using a radial
 │              │  Breadcrumb                [Actions] │
 │   Sidebar    ├──────────────────────────────────────┤
 │              │                                      │
-│  Dashboard   │         Main canvas                  │
+│  Home        │         Main canvas                  │
 │  AI Chat ●   │         (with radial glow)           │
 │  Library     │                                      │
 │  Training    │                                      │
@@ -215,20 +215,42 @@ A subtle luminous bloom — centered on the main content area — using a radial
 └──────────────┴──────────────────────────────────────┘
 ```
 
-**Mobile — bottom tab bar + full canvas:**
+**Mobile — floating nav cluster + full canvas:**
+
+A satellite profile avatar (identity, not a tab) plus a floating 4-tab pill,
+both on `--shadow-floating`, hovering 12px above the safe area. Content
+scrolls beneath the pill; browse screens reserve its footprint via the shared
+scroll canvas.
 
 ```
 ┌──────────────────────────┐
 │  Breadcrumb              │
-├──────────────────────────┤
 │                          │
 │    Main canvas           │
 │    (with radial glow)    │
 │                          │
-├──────────────────────────┤
-│ [Dash] [Chat] [Lib] [Tr] │
+│           (Modules)      │  ← Training speed dial (open state):
+│    (Knowledge Check)     │    options pop over a blur scrim,
+│                          │    Training's icon morphs to an X
+│ (MM) (Home·Chat·Lib·Tr)  │
 └──────────────────────────┘
 ```
+
+**Speed dials — the cluster's disclosure idiom.** Training is the only tab with
+children, so tapping it discloses Modules / Knowledge Check instead of
+navigating (two taps, accepted); its icon morphs to an X. The satellite avatar
+opens the account dial the same way — Profile / Settings — mirroring the
+desktop sidebar footer dropdown (the avatar keeps its photo while open; ring +
+scrim carry the open state). While open: canvas dims under the `--scrim` + 8px
+blur, Escape / outside tap / route change close it, focus is trapped in the
+dial, and the current section carries the nav-active pill.
+
+**Mobile hiding table:** the nav cluster shows on browse screens and yields on
+focused-task screens (full content height, explicit back affordance instead):
+
+| Nav visible (browse) | Nav hidden (focused task) |
+|---|---|
+| Home, Library home + folders, module listings, Knowledge Check listing/config, Profile | AI Chat (back affordance: "‹ Home"), open document, module detail, active Knowledge Check session, exam |
 
 **Canonical reference:** see the **Canonical examples** table.
 
@@ -238,16 +260,21 @@ A subtle luminous bloom — centered on the main content area — using a radial
 
 ## App-shell protocol
 
-The shell owns: left sidebar (desktop) / bottom tab bar (mobile), breadcrumb, and the role indicator.
+The shell owns: left sidebar (desktop) / floating nav cluster (mobile), breadcrumb, the role indicator, and the notifications bell (the PageHeader's actions slot — popover on desktop, right sheet on mobile; it follows the focused-task hiding table, so exams and reading stay do-not-disturb). Unread is a quiet primary dot, never a number bubble.
 
 **Sidebar background rule:** the sidebar is always `bg-transparent` — it never paints its own background. The page wrapper carries the background color (`--background`). This is what allows the main content card's shadow to bleed over the sidebar without clipping. Never set a background on the sidebar element or `--sidebar` token.
 
 Screens communicate with the shell by:
 - **Reporting modal/overlay state** — when a screen opens a modal, it signals open state so the nav and breadcrumb yield
+- **Reporting focused-task state** — screens whose focus is phase-based within one route (an active Knowledge Check session) report it via `useFocusedTask` (`cortex/src/hooks/use-mobile-nav.ts`) so the mobile nav yields; whole-route focused screens are matched by the shell's route rules in the same hook
 - **Never rendering their own nav, breadcrumb, or role indicator** — these are shell-only elements
 - **Role gating at the route level** — the shell enforces role-based route access; screens do not gate themselves independently
 
-The active user's role is always visible in the sidebar near the avatar (desktop) or accessible from the profile tab (mobile). Screens read the role from the auth context — they never receive it as a prop.
+The active user's role is always visible in the sidebar near the avatar (desktop) or via the nav cluster's satellite avatar → Profile (mobile). Screens read the role from the auth context — they never receive it as a prop.
+
+**Profile vs Settings:** `/profile` is the public showcase (identity, certifications, skill areas — "Visible to Avante staff"; editing launches from the page itself). `/settings` is the private account surface: Appearance, Notification preferences, and Sign out. Never mix the two. Both are reached through the avatar menu (desktop dropdown / mobile account dial): Profile · Settings.
+
+The theme control lives in Settings → Appearance (both form factors); there is no floating corner toggle. `ThemeProvider` bootstraps the saved preference on every surface, including auth.
 
 ---
 
@@ -330,7 +357,7 @@ Reuse the engine; never fork a parallel timed flow. The simulation is per **modu
 - **Primary CTA**: `color.primary` background, `color.onPrimary` text, `radius.button`, `size.fieldHeight`, signature glow never applied to buttons.
 - **Secondary CTA**: outlined variant — `color.primary` border and text, transparent background.
 - **Tertiary / "Skip" / "Not now"**: muted text link, not a button.
-- **Button text is sentence case**: "Start training", "Ask Cortex", "Save changes", "Back to dashboard".
+- **Button text is sentence case**: "Start training", "Ask Cortex", "Save changes", "Back to home".
 - **Disabled state**: 50% opacity + `cursor: not-allowed`. Never hidden.
 
 ---
@@ -354,6 +381,7 @@ Reuse the engine; never fork a parallel timed flow. The simulation is per **modu
 | Knowledge library | "No documents available." | Document grid |
 | Admin content list | "No content added yet. Start by uploading a document." | Content table |
 | Analytics | "No activity data yet." | Charts and metrics |
+| Notifications panel | "No new notifications." + "Updates about your modules and documents will appear here." | Today / Earlier grouped list |
 
 ---
 
@@ -381,6 +409,10 @@ Reuse the engine; never fork a parallel timed flow. The simulation is per **modu
 | AI thinking status shimmer sweep | `2200ms` | `linear` (infinite) |
 | Message / chapter content entrance | `200ms` | `ease-out` (translateY 8px + fade) |
 | Citation chip pop-in | `150ms` | `ease-out`, staggered `60ms` per chip |
+| Speed-dial option pop-in | `150ms` | `ease-out`, staggered `60ms` bottom-up, origin bottom-right |
+| Speed-dial option exit | `120ms` | `ease-out` (exits run ~20% faster) |
+| Speed-dial scrim fade | `160ms` | `ease-out` (the modal backdrop timing) |
+| Speed-dial icon morph (BookOpen ↔ X) | `150ms` | `ease-out` (opacity + rotate crossfade) |
 | Card hover lift | `150ms` | `ease-out` (translateY −2px + shadow; dark mode uses background step) |
 | Quiz wrong-answer shake | `250ms` | `ease-out` (±2px) |
 | Check pop-in (quiz / results) | `250–300ms` | `cubic-bezier(0.32, 0.72, 0, 1)` |
@@ -430,10 +462,13 @@ All animation collapses to imperceptible durations under `prefers-reduced-motion
 | Chat non-answers + citation gating | `cortex/src/lib/chat-mock.ts` (`resolveResponse`, `ChatResponse`) |
 | Exam simulation (practice mode) | `cortex/src/app/(app)/training/modules/[id]/exam/page.tsx` (`?mode=simulation`); `cortex/src/components/knowledge-check/KCExamSimConfig.tsx` |
 | Error wiring (toast + field-error) | `cortex/src/components/ui/toast.tsx` (helper + `<Toaster />`); `.field-error` in `globals.css` |
-| Mobile bottom tab bar | `cortex/src/components/mobile-tab-bar.tsx` |
+| Mobile floating nav + Training speed dial | `cortex/src/components/mobile-tab-bar.tsx` |
+| Mobile nav hiding table (focused tasks) | `cortex/src/hooks/use-mobile-nav.ts` |
 | AI thinking indicator + streaming caret | `cortex/src/components/chat/ThinkingIndicator.tsx` |
 | Primary CTA (Button `size="cta"`) | `cortex/src/components/ui/button.tsx` |
 | Role indicator (sidebar footer) | `cortex/src/components/cortex-sidebar.tsx` + `cortex/src/lib/user-mock.ts` |
+| Notifications bell + panel | `cortex/src/components/notifications-bell.tsx` + `cortex/src/lib/notifications-mock.ts` |
+| Settings (private account surface) | `cortex/src/app/(app)/settings/page.tsx` |
 | Role-gated route | [PATH — not built yet: no auth middleware exists] |
 
 ---
