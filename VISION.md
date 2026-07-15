@@ -94,7 +94,7 @@ The canonical source for every token — light **and** dark — is the file name
 | `radius.button` | `8px` | Buttons |
 | `radius.card` | `12px` | Cards, modals |
 | `radius.pill` | `6px` | Nav active pill, tags |
-| `size.fieldHeight` | `40px` | Inputs and buttons — DO NOT VARY |
+| `size.fieldHeight` | `48px` | Inputs and primary CTAs — DO NOT VARY. Exception: the AI chat message input keeps its own compact metrics |
 | `size.formWidth` | `400px` | Standard form/input column width |
 | `size.sidebarWidth` | `160px` | Left sidebar — desktop |
 
@@ -276,7 +276,7 @@ Screens communicate with the shell by:
 
 The active user's role is always visible in the sidebar near the avatar (desktop) or via the nav cluster's satellite avatar → Profile (mobile). Screens read the role from the auth context — they never receive it as a prop.
 
-**Profile vs Settings:** `/profile` is the public showcase (identity, certifications, skill areas — "Visible to Avante staff"; editing launches from the page itself). `/settings` is the private account surface: Appearance, Notification preferences, and Sign out. Never mix the two. Both are reached through the avatar menu (desktop dropdown / mobile account dial): Profile · Settings.
+**Profile vs Settings:** `/profile` is the public showcase (identity, certifications — with category pills that summarise the skill areas held and double as a single-select filter over the list — "Visible to Avante staff"; editing launches from the page itself). `/settings` is the private account surface: Appearance, Notification preferences, and Sign out. Never mix the two. Both are reached through the avatar menu (desktop dropdown / mobile account dial): Profile · Settings.
 
 The theme control lives in Settings → Appearance (both form factors); there is no floating corner toggle. `ThemeProvider` bootstraps the saved preference on every surface, including auth.
 
