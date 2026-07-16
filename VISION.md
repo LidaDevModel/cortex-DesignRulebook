@@ -90,6 +90,7 @@ The canonical source for every token — light **and** dark — is the file name
 | `color.inputBorder` | `#d4f3e8` | Chat input widget border |
 | `color.danger` | `#dc2626` | Error states, destructive actions |
 | `color.dangerSurface` | `#fef2f2` | Error banner/toast background |
+| `color.warning` | `oklch(0.55 0.14 52)` | Amber caution — medium password strength (the only sub-error severity) |
 | `radius.input` | `8px` | Form fields |
 | `radius.button` | `8px` | Buttons |
 | `radius.card` | `12px` | Cards, modals |
@@ -120,6 +121,7 @@ Reference only — the live source is the `.dark` block of `cortex/src/app/globa
 | `color.inputBorder` | `#355e50` |
 | `color.danger` | `#dc2626` (same) |
 | `color.dangerSurface` | `#fef2f2` (same) |
+| `color.warning` | `oklch(0.82 0.15 78)` (brighter amber on dark) |
 
 ### Extended token families
 
@@ -411,6 +413,7 @@ Reuse the engine; never fork a parallel timed flow. The simulation is per **modu
 | AI response streaming cursor | `600ms` | `ease-in-out` (pulse) |
 | AI thinking indicator (orb breathe) | `1200ms` | `ease-in-out` (infinite) |
 | AI thinking status shimmer sweep | `2200ms` | `linear` (infinite) |
+| Chat input border sheen (ambient) | `6500ms` | `linear` (infinite) — deliberately slow + low-opacity so a perpetual effect on a focused-task screen stays calm |
 | Message / chapter content entrance | `200ms` | `ease-out` (translateY 8px + fade) |
 | Citation chip pop-in | `150ms` | `ease-out`, staggered `60ms` per chip |
 | Speed-dial option pop-in | `150ms` | `ease-out`, staggered `60ms` bottom-up, origin bottom-right |
