@@ -260,7 +260,7 @@ focused-task screens (full content height, explicit back affordance instead):
 
 **Active nav state:**
 - **Desktop sidebar** — pill-shaped highlight using `color.navActive` background and `color.primary` text + icon. Never underline, never border — pill only.
-- **Mobile tab bar** — colour only: the active tab's icon and label turn `color.primary`, inactive stay muted. No pill/background behind the icon (a chip there reads heavy on the floating bar). The satellite avatar shows its active state with a `color.ring` ring, not a pill.
+- **Mobile tab bar** — colour **plus weight**: the active tab's icon and label turn `color.primary` **and** gain weight — the icon steps to `stroke-width: 2.25` (inactive `1.5`) and the label to `600` (inactive `500`). Colour alone under-reads in light mode (the dark-green primary sits close in lightness to the muted inactive), so the weight/stroke channel carries the "you are here" cue in both modes. Inactive stay muted at the base weights. Still no pill/background behind the icon (a chip there reads heavy on the floating bar). The satellite avatar shows its active state with a `color.ring` ring, not a pill.
 
 ---
 
@@ -305,8 +305,22 @@ The theme control lives in Settings → Appearance (both form factors); there is
 | AI chat fails to respond | "Something went wrong" | "Cortex couldn't get a response. Try again in a moment." |
 | Access outside role | "Access restricted" | "This content isn't available for your role. Contact your manager if you think this is a mistake." |
 | Content fails to load | "Content unavailable" | "We couldn't load this. Check your connection and try again." |
+| Attachment wrong type (chat composer) | "Couldn't attach file" | "Attach an image or a document (PDF, Word, or text)." |
+| Attachment too large (chat composer) | "Couldn't attach file" | "Files must be under 10 MB." |
+| Attachment limit reached (chat composer) | "Attachment limit reached" | "You can attach up to 10 items per message." |
 
 **Tone:** plain, neutral, no blame, no exclamation marks. Sentence case. End descriptions with a full stop.
+
+The chat composer caps attachments at **10 per message** (images + files combined, mirroring a real multimodal backend). A drop/paste over the limit accepts up to the ceiling and toasts the rest (partial accept, not a full reject); at the ceiling the attach control is disabled (50% + `cursor-not-allowed`, tooltip "Up to 10 per message"). Per-file limits also apply: image or PDF/Word/text only, under 10 MB each.
+
+---
+
+## Loading & connectivity (resilience layer)
+
+The primary user is a field guard on a phone with unreliable signal, so loading and offline are first-class states, not afterthoughts.
+
+- **Loading skeletons.** Data-fetch screens render a `Skeleton` (`cortex/src/components/ui/skeleton.tsx`) layout that mirrors the real content's shape, not spinners. The skeleton fill is `bg-foreground/10` (mode-safe soft gray — `bg-muted` is invisible in dark, where it equals the page). Shown on a screen's **first load per session** via `useInitialLoad` (`cortex/src/hooks/use-initial-load.ts`) — a fresh open shows it, repeat client-side navigation stays instant; a real backend's actual latency drives it later. Applied on Library and Training-modules today; extend the same recipe to any new data screen.
+- **Offline banner.** A shell-level, quiet status bar (`cortex/src/components/offline-banner.tsx`, driven by `useOnlineStatus`) appears below the header only while offline. Copy: **"You're offline. Showing saved copies."** Reassures, never alarms — neutral `surface-raised`, never an all-red bar (matches the error tone). Cached content stays readable (a real client layers a service worker + durable file URLs; the mock's seeded data is already client-side).
 
 ---
 
@@ -421,6 +435,8 @@ Reuse the engine; never fork a parallel timed flow. The simulation is per **modu
 | Speed-dial scrim fade | `160ms` | `ease-out` (the modal backdrop timing) |
 | Speed-dial icon morph (BookOpen ↔ X) | `150ms` | `ease-out` (opacity + rotate crossfade) |
 | Card hover lift | `150ms` | `ease-out` (translateY −2px + shadow; dark mode uses background step) |
+| Library illustration hover (file tilt / folder fan) | `300ms` | `ease-out` — real transform motion, never a two-picture crossfade: the file paper lifts + tilts; folder sheets travel to their fan poses staggered `40ms` per sheet; only the folder body (two different outlines) crossfades `300ms` |
+| Loading skeleton pulse | `2000ms` | `cubic-bezier(0.4, 0, 0.6, 1)` (infinite) — Tailwind `animate-pulse` on the `Skeleton` primitive; reduced-motion collapses it |
 | Quiz wrong-answer shake | `250ms` | `ease-out` (±2px) |
 | Check pop-in (quiz / results) | `250–300ms` | `cubic-bezier(0.32, 0.72, 0, 1)` |
 | Results glow bloom | `400ms` | `ease-out` |
